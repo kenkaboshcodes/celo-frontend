@@ -60,7 +60,7 @@ const ProductReview = ({ id }: ProductReviewProps) => {
     }
     setLoading("Creating...");
     if (!isComplete) throw new Error("Please fill appropriate field");
-    // Create the review by calling the writeReview function on the marketplace contract
+    // Creates the review by calling the writeReview function on the marketplace contract
     const purchaseTx = await createReviewComment();
     setLoading("Waiting for confirmation...");
     // Wait for the transaction to be mined

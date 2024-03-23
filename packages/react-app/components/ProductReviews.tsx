@@ -29,7 +29,7 @@ interface Review {
 const ProductReviews = ({ show, id }: ProductReviewsProps) => {
   const { data: rawReview }: any = useContractCall("readReview", [id], true);
 
-  // Convert the data to the Product interface
+  // Converts the data to the Product interface
   const [reviews, setReviews] = useState<Review | null>(null);
   // Define the states to store the error, success and l/oading messages
   const [error, setError] = useState("");
@@ -52,13 +52,13 @@ const ProductReviews = ({ show, id }: ProductReviewsProps) => {
   }, [rawReview]);
 
 
-  // Call the getFormatReview function when the rawReview state changes
+  // Calls the getFormatReview function when the rawReview state changes
   useEffect(() => {
     getFormatReview();
   }, [getFormatReview]);
 
 
-  // Define the identicon template to display the reviewer of the product
+  // Defines the identicon template to display the reviewer of the product
   const identiconTemplate = (address: string) => {
     return (
       <Blockies

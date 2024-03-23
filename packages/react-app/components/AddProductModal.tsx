@@ -58,7 +58,7 @@ const productPriceInWei = ethers.utils.parseEther(
   `${debouncedProductPrice.toString() || 0}`
 );
 
-// Use the useContractSend hook to use our writeProduct function on the marketplace contract and add a product to the marketplace
+// Uses the useContractSend hook to use our writeProduct function on the marketplace contract and add a product to the marketplace
 const { writeAsync: createProduct } = useContractSend("writeProduct", [
     debouncedProductName,
     debouncedProductImage,

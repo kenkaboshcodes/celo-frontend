@@ -38,7 +38,7 @@ To get this project up running locally, follow these simple steps:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/codeinn001/celo-frontend.git
+git clone https://github.com/kenkaboshcodes/celo-frontend.git
 ```
 
 2. Navigate to the `react-app` directory:

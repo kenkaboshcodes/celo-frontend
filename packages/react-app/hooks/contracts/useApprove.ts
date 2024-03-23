@@ -9,7 +9,7 @@ import MarketplaceInstance from "../../abi/Marketplace.json";
 // Import BigNumber from ethers to handle big numbers used in Celo
 import {BigNumber} from "ethers";
 
-// write to a smart contract
+// writes to a smart contract
 export const useContractApprove = (price: number | string) => {
     // The gas limit to use when sending a transaction
     const gasLimit = BigNumber.from(1000000);

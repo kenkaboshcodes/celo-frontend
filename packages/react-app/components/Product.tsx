@@ -131,7 +131,7 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
     <div className={"shadow-lg relative rounded-b-lg"}>
       <p className="group">
         <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-white xl:aspect-w-7 xl:aspect-h-8 ">
-          {/* Show the number of products sold */}
+          {/* Shows the number of products sold */}
           <span
             className={
               "absolute z-10 right-0 mt-4 bg-amber-400 text-black p-1 rounded-l-lg px-4"
@@ -145,7 +145,7 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
             alt={"image"}
             className="w-full h-80 rounded-t-md  object-cover object-center group-hover:opacity-75"
           />
-          {/* Show the address of the product owner as an identicon and link to the address on the Celo Explorer */}
+          {/* Shows the address of the product owner as an identicon and link to the address on the Celo Explorer */}
           <Link
             href={`https://explorer.celo.org/alfajores/address/${product.owner}`}
             className={"absolute -mt-7 ml-6 h-16 w-16 rounded-full"}
@@ -156,10 +156,10 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
 
         <div className={"m-5"}>
           <div className={"pt-1"}>
-            {/* Show the product name */}
+            {/* Shows the product name */}
             <p className="mt-4 text-2xl font-bold">{product.name}</p>
             <div className={"h-40 overflow-y-hidden scrollbar-hide"}>
-              {/* Show the product description */}
+              {/* Shows the product description */}
               <h3 className="mt-4 text-sm text-gray-700">
                 {product.description}
               </h3>
@@ -168,7 +168,7 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
 
           <div>
             <div className={"flex flex-row"}>
-              {/* Show the product location */}
+              {/* Shows the product location */}
               <img src={"/location.svg"} alt="Location" className={"w-6"} />
               <h3 className="text-sm text-gray-700">{product.location}</h3>
             </div>
@@ -178,7 +178,7 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
               onClick={purchaseProduct}
               className="mt-4 h-14 w-full border-[1px] border-gray-500 text-black p-2 rounded-lg hover:bg-black hover:text-white"
             >
-              {/* Show the product price in cUSD */}
+              {/* Shows the product price in cUSD */}
               Buy for {productPriceFromWei} cUSD
             </button>
 

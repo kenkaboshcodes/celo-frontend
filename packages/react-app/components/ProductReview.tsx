@@ -19,7 +19,6 @@ import erc20Instance from "../abi/erc20.json";
 
 // The ProductReview component is used to add a review to a product
 
-
 // Define the interface for the review, an interface is a type that describes the properties of an object
 type ProductReviewProps = {
   id: number;
@@ -31,21 +30,21 @@ const ProductReview = ({ id }: ProductReviewProps) => {
   // The following states are used to store the values of the form fields
   const [reviewComment, setReviewComment] = useState("");
 
+  const [disable, setDisable] = useState(false);
+
   // The following states are used to store the debounced values of the form fields
   const [debouncedReviewComment] = useDebounce(reviewComment, 500);
 
   // The loading state is used to display a loading message
   const [loading, setLoading] = useState("");
 
+  // Check if the input fields are filled
+  const isComplete = reviewComment.length > 0 && reviewComment != " ";
 
-  // Check if all the input fields are filled
-  const isComplete = reviewComment.length > 0;
-
-  // Clear the input fields after the review is added to the product
+  // Clear the input field after the review is added to the product
   const clearForm = () => {
     setReviewComment("");
   };
-
 
   // Use the useContractSend hook to use our writeReview function on the marketplace contract and add a review to the product
   const { writeAsync: createReviewComment } = useContractSend("writeReview", [
@@ -57,6 +56,7 @@ const ProductReview = ({ id }: ProductReviewProps) => {
   const handleCreateReviewComment = async () => {
     if (!createReviewComment) {
       throw "Failed to create review";
+      console.log("wronggg");
     }
     setLoading("Creating...");
     if (!isComplete) throw new Error("Please fill appropriate field");
@@ -73,6 +73,8 @@ const ProductReview = ({ id }: ProductReviewProps) => {
   // Define function that handles the creation of a review, if a user submits the review form
   const addReviewComment = async (e: any) => {
     e.preventDefault();
+    setDisable(true);
+
     try {
       // Display a notification while the review is being added to the product
       await toast.promise(handleCreateReviewComment(), {
@@ -88,10 +90,10 @@ const ProductReview = ({ id }: ProductReviewProps) => {
     } finally {
       setLoading("");
     }
+    setDisable(false);
   };
 
-
- // Return the JSX for the ProductReview component
+  // Return the JSX for the ProductReview component
   return (
     <div>
       <form
@@ -109,6 +111,10 @@ const ProductReview = ({ id }: ProductReviewProps) => {
             className={"border-2 border-gray-400 rounded-md w-full"}
             onChange={(e) => {
               setReviewComment(e.target.value);
+              let x = e.target.value.trim();
+              if (x.length > 2 && x != "") {
+                setDisable(false);
+              } else setDisable(true);
             }}
             required
           />
@@ -119,6 +125,7 @@ const ProductReview = ({ id }: ProductReviewProps) => {
           className={
             "self-end border-[1px] border-gray-500 px-7 py-2 rounded-md"
           }
+          disabled={disable}
         >
           Submit
         </button>

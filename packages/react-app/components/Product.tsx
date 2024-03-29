@@ -17,65 +17,63 @@ import { identiconTemplate } from "@/helpers";
 // Import our custom hooks to interact with the smart contract
 import { useContractApprove } from "@/hooks/contracts/useApprove";
 import { useContractCall } from "@/hooks/contracts/useContractRead";
-import { useContractSend } from "@/hooks/contracts/useContractWrite"; 
+import { useContractSend } from "@/hooks/contracts/useContractWrite";
 import ProductReviews from "@/components/ProductReviews";
 
 // Define the interface for the product, an interface is a type that describes the properties of an object
 interface Product {
-    name: string;
-    price: number;
-    owner: string;
-    image: string;
-    description: string;
-    location: string;
-    sold: boolean;
-  }
+  name: string;
+  price: number;
+  owner: string;
+  image: string;
+  description: string;
+  location: string;
+  sold: boolean;
+}
 
-  // Define the Product component which takes in the id of the product and some functions to display notifications
+// Define the Product component which takes in the id of the product and some functions to display notifications
 const Product = ({ id, setError, setLoading, clear }: any) => {
-
-
   const [showReview, setShowReview] = useState(false);
-  const show = showReview ? 'block' : 'hidden';
+  const [disable, setDisable] = useState(false);
+  const show = showReview ? "block" : "hidden";
+
   const toggleReview = () => {
     setShowReview(!showReview);
-  }
+  };
 
+  // Use the useAccount hook to store the user's address
+  const { address } = useAccount();
+  // Use the useContractCall hook to read the data of the product with the id passed in, from the marketplace contract
+  const { data: rawProduct }: any = useContractCall("readProduct", [id], true);
+  // Use the useContractSend hook to purchase the product with the id passed in, via the marketplace contract
+  const { writeAsync: purchase } = useContractSend("buyProduct", [Number(id)]);
+  const [product, setProduct] = useState<Product | null>(null);
+  // Use the useContractApprove hook to approve the spending of the product's price, for the ERC20 cUSD contract
+  const { writeAsync: approve } = useContractApprove(
+    product?.price?.toString() || "0"
+  );
+  // Use the useConnectModal hook to trigger the wallet connect modal
+  const { openConnectModal } = useConnectModal();
+  // Format the product data that we read from the smart contract
+  const getFormatProduct = useCallback(() => {
+    if (!rawProduct) return null;
+    setProduct({
+      owner: rawProduct[0],
+      name: rawProduct[1],
+      image: rawProduct[2],
+      description: rawProduct[3],
+      location: rawProduct[4],
+      price: Number(rawProduct[5]),
+      sold: rawProduct[6].toString(),
+    });
+  }, [rawProduct]);
 
+  // Call the getFormatProduct function when the rawProduct state changes
+  useEffect(() => {
+    getFormatProduct();
+  }, [getFormatProduct]);
 
-    // Use the useAccount hook to store the user's address
-    const { address } = useAccount();
-    // Use the useContractCall hook to read the data of the product with the id passed in, from the marketplace contract
-    const { data: rawProduct }: any = useContractCall("readProduct", [id], true);
-    // Use the useContractSend hook to purchase the product with the id passed in, via the marketplace contract
-    const { writeAsync: purchase } = useContractSend("buyProduct", [Number(id)]);
-    const [product, setProduct] = useState<Product | null>(null);
-    // Use the useContractApprove hook to approve the spending of the product's price, for the ERC20 cUSD contract
-    const { writeAsync: approve } = useContractApprove(
-      product?.price?.toString() || "0"
-    );
-    // Use the useConnectModal hook to trigger the wallet connect modal
-    const { openConnectModal } = useConnectModal();
-    // Format the product data that we read from the smart contract
-    const getFormatProduct = useCallback(() => {
-      if (!rawProduct) return null;
-      setProduct({
-        owner: rawProduct[0],
-        name: rawProduct[1],
-        image: rawProduct[2],
-        description: rawProduct[3],
-        location: rawProduct[4],
-        price: Number(rawProduct[5]),
-        sold: rawProduct[6].toString(),
-      });
-    }, [rawProduct]);
-  
-    // Call the getFormatProduct function when the rawProduct state changes
-    useEffect(() => {
-      getFormatProduct();
-    }, [getFormatProduct]);
-
-    // Define the handlePurchase function which handles the purchase interaction with the smart contract
+  // Define the handlePurchase function which handles the purchase interaction with the smart contract
   const handlePurchase = async () => {
     if (!approve || !purchase) {
       throw "Failed to purchase this product";
@@ -94,6 +92,7 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
   // Define the purchaseProduct function that is called when the user clicks the purchase button
   const purchaseProduct = async () => {
     setLoading("Approving ...");
+    setDisable(true);
     clear();
 
     try {
@@ -115,6 +114,7 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
       // Once the purchase is complete, clear the loading state
     } finally {
       setLoading(null);
+      setDisable(false);
     }
   };
 
@@ -177,6 +177,7 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
             <button
               onClick={purchaseProduct}
               className="mt-4 h-14 w-full border-[1px] border-gray-500 text-black p-2 rounded-lg hover:bg-black hover:text-white"
+              disabled={disable}
             >
               {/* Shows the product price in cUSD */}
               Buy for {productPriceFromWei} cUSD
@@ -188,10 +189,10 @@ const Product = ({ id, setError, setLoading, clear }: any) => {
               className="mt-4 h-14 w-full border-[1px] border-gray-500 text-black p-2 rounded-lg hover:bg-black hover:text-white"
             >
               {/* Shows or hide reviews */}
-              {showReview ? 'Hide Review(s)' : 'See Review(s)'}
+              {showReview ? "Hide Review(s)" : "See Review(s)"}
             </button>
             {/* Show the reviews */}
-            <ProductReviews show={show} id={id} />  
+            <ProductReviews show={show} id={id} />
           </div>
         </div>
       </p>

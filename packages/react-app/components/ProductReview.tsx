@@ -61,10 +61,10 @@ const ProductReview = ({ id }: ProductReviewProps) => {
     setLoading("Creating...");
     if (!isComplete) throw new Error("Please fill appropriate field");
     // Creates the review by calling the writeReview function on the marketplace contract
-    const purchaseTx = await createReviewComment();
+    const createReviewTx = await createReviewComment();
     setLoading("Waiting for confirmation...");
-    // Wait for the transaction to be mined
-    await purchaseTx.wait();
+    // Wait for the transaction to be created
+    await createReviewTx.wait();
     // Close the modal and clear the input fields after the review is added to the product
     // setVisible(false);
     clearForm();

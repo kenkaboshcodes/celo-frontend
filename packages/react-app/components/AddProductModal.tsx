@@ -17,49 +17,49 @@ import erc20Instance from "../abi/erc20.json";
 
 // The AddProductModal component is used to add a product to the marketplace
 const AddProductModal = () => {
-    // The visible state is used to toggle the modal
-    const [visible, setVisible] = useState(false);
-    // The following states are used to store the values of the form fields
-    const [productName, setProductName] = useState("");
-    const [productPrice, setProductPrice] = useState<string | number>(0);
-    const [productImage, setProductImage] = useState("");
-    const [productDescription, setProductDescription] = useState("");
-    const [productLocation, setProductLocation] = useState("");
-    // The following states are used to store the debounced values of the form fields
-    const [debouncedProductName] = useDebounce(productName, 500);
-    const [debouncedProductPrice] = useDebounce(productPrice, 500);
-    const [debouncedProductImage] = useDebounce(productImage, 500);
-    const [debouncedProductDescription] = useDebounce(productDescription, 500);
-    const [debouncedProductLocation] = useDebounce(productLocation, 500);
-    // The loading state is used to display a loading message
-    const [loading, setLoading] = useState("");
-    // The displayBalance state is used to store the cUSD balance of the user
-    const [displayBalance, setDisplayBalance] = useState(false);
-
-    // Check if all the input fields are filled
+  // The visible state is used to toggle the modal
+  const [visible, setVisible] = useState(false);
+  // The following states are used to store the values of the form fields
+  const [productName, setProductName] = useState("");
+  const [productPrice, setProductPrice] = useState<string | number>(0);
+  const [productImage, setProductImage] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productLocation, setProductLocation] = useState("");
+  // The following states are used to store the debounced values of the form fields
+  const [debouncedProductName] = useDebounce(productName, 500);
+  const [debouncedProductPrice] = useDebounce(productPrice, 500);
+  const [debouncedProductImage] = useDebounce(productImage, 500);
+  const [debouncedProductDescription] = useDebounce(productDescription, 500);
+  const [debouncedProductLocation] = useDebounce(productLocation, 500);
+  // The loading state is used to display a loading message
+  const [loading, setLoading] = useState("");
+  // The displayBalance state is used to store the cUSD balance of the user
+  const [displayBalance, setDisplayBalance] = useState(false);
+  const [disable, setDisable] = useState(false);
+  // Check if all the input fields are filled
   const isComplete =
-  productName &&
-  productPrice &&
-  productImage &&
-  productLocation &&
-  productDescription;
+    productName &&
+    productPrice &&
+    productImage &&
+    productLocation &&
+    productDescription;
 
-// Clear the input fields after the product is added to the marketplace
-const clearForm = () => {
-  setProductName("");
-  setProductPrice(0);
-  setProductImage("");
-  setProductDescription("");
-  setProductLocation("");
-};
+  // Clear the input fields after the product is added to the marketplace
+  const clearForm = () => {
+    setProductName("");
+    setProductPrice(0);
+    setProductImage("");
+    setProductDescription("");
+    setProductLocation("");
+  };
 
-// Convert the product price to wei
-const productPriceInWei = ethers.utils.parseEther(
-  `${debouncedProductPrice.toString() || 0}`
-);
+  // Convert the product price to wei
+  const productPriceInWei = ethers.utils.parseEther(
+    `${debouncedProductPrice.toString() || 0}`
+  );
 
-// Uses the useContractSend hook to use our writeProduct function on the marketplace contract and add a product to the marketplace
-const { writeAsync: createProduct } = useContractSend("writeProduct", [
+  // Uses the useContractSend hook to use our writeProduct function on the marketplace contract and add a product to the marketplace
+  const { writeAsync: createProduct } = useContractSend("writeProduct", [
     debouncedProductName,
     debouncedProductImage,
     debouncedProductDescription,
@@ -75,10 +75,10 @@ const { writeAsync: createProduct } = useContractSend("writeProduct", [
     setLoading("Creating...");
     if (!isComplete) throw new Error("Please fill all fields");
     // Create the product by calling the writeProduct function on the marketplace contract
-    const purchaseTx = await createProduct();
+    const createProductTx = await createProduct();
     setLoading("Waiting for confirmation...");
-    // Wait for the transaction to be mined
-    await purchaseTx.wait();
+    // Wait for the transaction to be created
+    await createProductTx.wait();
     // Close the modal and clear the input fields after the product is added to the marketplace
     setVisible(false);
     clearForm();
@@ -161,7 +161,8 @@ const { writeAsync: createProduct } = useContractSend("writeProduct", [
                     <label>Product Name</label>
                     <input
                       onChange={(e) => {
-                        setProductName(e.target.value);
+                        let name = e.target.value;
+                        setProductName(name.trim());
                       }}
                       required
                       type="text"
@@ -171,7 +172,8 @@ const { writeAsync: createProduct } = useContractSend("writeProduct", [
                     <label>Product Image (URL)</label>
                     <input
                       onChange={(e) => {
-                        setProductImage(e.target.value);
+                        let url = e.target.value;
+                        setProductImage(url.trim());
                       }}
                       required
                       type="text"
@@ -181,7 +183,8 @@ const { writeAsync: createProduct } = useContractSend("writeProduct", [
                     <label>Product Description</label>
                     <input
                       onChange={(e) => {
-                        setProductDescription(e.target.value);
+                        let description = e.target.value;
+                        setProductDescription(description.trim());
                       }}
                       required
                       type="text"
@@ -191,7 +194,8 @@ const { writeAsync: createProduct } = useContractSend("writeProduct", [
                     <label>Product Location</label>
                     <input
                       onChange={(e) => {
-                        setProductLocation(e.target.value);
+                        let location = e.target.value;
+                        setProductLocation(location.trim());
                       }}
                       required
                       type="text"
